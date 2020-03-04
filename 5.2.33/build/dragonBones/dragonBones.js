@@ -2832,12 +2832,15 @@ var dragonBones;
         PolygonBoundingBoxData.prototype.containsPoint = function (pX, pY) {
             var isInSide = false;
             if (pX >= this.x && pX <= this.width && pY >= this.y && pY <= this.height) {
-                for (var i = 0, l = this.vertices.length, iP = l - 2; i < l; i += 2) {
-                    var yA = this.vertices[iP + 1];
-                    var yB = this.vertices[i + 1];
+                var _vertices = this.vertices;
+                var _len = _vertices.length;
+                var iP = _len -2;
+                for (var i = 0; i < _len; i += 2) {
+                    var yA = _vertices[iP + 1];
+                    var yB = _vertices[i + 1];
                     if ((yB < pY && yA >= pY) || (yA < pY && yB >= pY)) {
-                        var xA = this.vertices[iP];
-                        var xB = this.vertices[i];
+                        var xA = _vertices[iP];
+                        var xB = _vertices[i];
                         if ((pY - yB) * (xA - xB) / (yA - yB) + xB < pX) {
                             isInSide = !isInSide;
                         }
