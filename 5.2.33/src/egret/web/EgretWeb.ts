@@ -203,6 +203,29 @@ namespace egret.web {
         }
     }
 
+    var IsRequestAnimationFrameMode: boolean = false;
+
+    export function getTickerType() {
+        return IsRequestAnimationFrameMode;
+    }
+
+    /** 獲取當前裝置類型 */
+    export function getDeviceType() {
+        let userAgent = navigator.userAgent;
+
+        if (/Android/i.test(userAgent)) {
+            return "android";
+        } else if (/iPad/i.test(userAgent)) {
+            return "iOS";
+        } else if (/iPhone/i.test(userAgent)) {
+            return "iOS";
+        } else if (/Windows/i.test(userAgent)) {
+            return "web";
+        } else {
+            return "unknown";
+        }
+    }
+
     /**
      * @private
      * 启动心跳计时器。
@@ -215,10 +238,19 @@ namespace egret.web {
             window["oRequestAnimationFrame"] ||
             window["msRequestAnimationFrame"];
 
+        if(getDeviceType() == "web" && requestAnimationFrame){
+            requestAnimationFrame = null;
+        }
+
         if (!requestAnimationFrame) {
+            IsRequestAnimationFrameMode = false;
             requestAnimationFrame = function (callback) {
                 return window.setTimeout(callback, 1000 / 60);
             };
+        }
+        else
+        {
+            IsRequestAnimationFrameMode = true;
         }
 
         requestAnimationFrame(onTick);
