@@ -166,6 +166,16 @@ module RES {
 		 * 加载下一项资源，线程控制
 		 */
 		private loadNextResource(): void {
+
+			if(DEBUG){
+				if(this.loadingCount >= this.thread && RES.isGroupLoaded("game_share") == true){
+					console.info("[怎麼回事啊~ 居然觸發當前執行續比設定執行續還多的問題");
+					console.info("[修正後的執行續情況]  loadingCount = " + this.loadingCount + "   ....    " + this.thread)
+					this.loadingCount = 0;
+				}
+				console.info("[當前執行續情況]  loadingCount = " + this.loadingCount + "   ....    " + this.thread)
+			}
+
 			while (this.loadingCount < this.thread) {
 				let isload = this.loadSingleResource();
 				if (!isload) {
