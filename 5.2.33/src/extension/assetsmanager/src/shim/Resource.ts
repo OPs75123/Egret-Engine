@@ -116,21 +116,7 @@ module RES {
         }
         return type;
     }
-    /**
-     * Conduct mapping injection with class definition as the value, Deprecated.
-     * @deprecated
-     * @see RES.processor.map
-     * @language en_US
-     */
-    /**
-     * 以类定义为值进行映射注入，已废弃。
-     * @deprecated
-     * @see RES.processor.map
-     * @language zh_CN
-     */
-    export function registerAnalyzer(type: string, analyzerClass: any) {
-        throw new ResourceManagerError(2002);
-    }
+ 
     /**
     * Set whether it is compatible mode
     * When the value is true, the assetsManager will output the design of Res. When it is false, all the loaded resources will be returned as promises.
