@@ -101,6 +101,7 @@ module RES {
             case "m4a":
             case "mp4":
             case "aiff":
+            case "aac":
             case "wma":
             case "mid":
                 type = ResourceItem.TYPE_SOUND;
@@ -140,39 +141,111 @@ module RES {
      * @internal
      */
     export let isCompatible: boolean = false
-    /**
-     * Load configuration file and parse.
-     * @param url The url address of the resource config
-     * @param resourceRoot The root address of the resource config
-     * @returns Promise
-     * @see #setMaxRetryTimes
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 加载配置文件并解析。
-     * @param url 资源配置的url地址
-     * @param resourceRoot 资源配置的根地址
-     * @returns Promise 
-     * @see #setMaxRetryTimes
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    export function loadConfig(url: string, resourceRoot: string): Promise<void> {
-        if (resourceRoot.indexOf('://') >= 0) {
-            const temp = resourceRoot.split('://');
-            resourceRoot = temp[0] + '://' + path.normalize(temp[1] + '/');
-            url = url.replace(resourceRoot, '');
+
+    export class DownloadMgr{
+        public instance:Resource = new Resource();
+        public constructor(){}
+
+        /**
+         * Load configuration file and parse.
+         * @param url The url address of the resource config
+         * @param resourceRoot The root address of the resource config
+         * @returns Promise
+         * @see #setMaxRetryTimes
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 加载配置文件并解析。
+         * @param url 资源配置的url地址
+         * @param resourceRoot 资源配置的根地址
+         * @returns Promise 
+         * @see #setMaxRetryTimes
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        public loadConfig(url: string, resourceRoot: string): Promise<void> {
+            if (resourceRoot.indexOf('://') >= 0) {
+                const temp = resourceRoot.split('://');
+                resourceRoot = temp[0] + '://' + path.normalize(temp[1] + '/');
+                url = url.replace(resourceRoot, '');
+            }
+            else {
+                resourceRoot = path.normalize(resourceRoot + "/");
+                url = url.replace(resourceRoot, '');
+            }
+            setConfigURL(url, resourceRoot);
+            return compatiblePromise(this.instance.loadConfig());
         }
-        else {
-            resourceRoot = path.normalize(resourceRoot + "/");
-            url = url.replace(resourceRoot, '');
+
+        /**
+         * Load a set of resources according to the group name.
+         * @param name Group name to load the resource group.
+         * @param priority Load priority can be negative, the default value is 0.
+         * <br>A low priority group must wait for the high priority group to complete the end of the load to start, and the same priority group will be loaded at the same time.
+         * @param reporter Resource group loading progress prompt
+         * @see #setMaxRetryTimes
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 根据组名加载一组资源。
+         * @param name 要加载资源组的组名。
+         * @param priority 加载优先级,可以为负数,默认值为 0。
+         * <br>低优先级的组必须等待高优先级组完全加载结束才能开始，同一优先级的组会同时加载。
+         * @param reporter 资源组的加载进度提示
+         * @see #setMaxRetryTimes
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        public loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
+            return compatiblePromise(instance.loadGroup(name, priority, reporter));
         }
-        setConfigURL(url, resourceRoot);
-        if (!instance) instance = new Resource();
-        return compatiblePromise(instance.loadConfig());
+
+        /**
+         * Sets the maximum number of concurrent load threads, the default value is 4.
+         * @param thread The number of concurrent loads to be set.
+         * @see #setMaxRetryTimes
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 设置最大并发加载线程数量，默认值是 4。
+         * @param thread 要设置的并发加载数。
+         * @see #setMaxRetryTimes
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        public setMaxLoadingThread(thread: number): void {
+            if (!instance) instance = new Resource();
+            instance.setMaxLoadingThread(thread);
+        }
+        
+        /**
+         * Sets the number of retry times when the resource failed to load, and the default value is 3.
+         * @param retry To set the retry count.
+         * @includeExample extension/resource/Resource.ts
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language en_US
+         */
+        /**
+         * 设置资源加载失败时的重试次数，默认值是 3。
+         * @param retry 要设置的重试次数。
+         * @includeExample extension/resource/Resource.ts
+         * @version Egret 5.2
+         * @platform Web,Native
+         * @language zh_CN
+         */
+        public setMaxRetryTimes(retry: number): void {
+            instance.setMaxRetryTimes(retry);
+        }
     }
 
     function compatiblePromise(promise: Promise<void>): Promise<void> | Promise<any> {
@@ -183,31 +256,7 @@ module RES {
             return promise;
         }
     }
-    /**
-     * Load a set of resources according to the group name.
-     * @param name Group name to load the resource group.
-     * @param priority Load priority can be negative, the default value is 0.
-     * <br>A low priority group must wait for the high priority group to complete the end of the load to start, and the same priority group will be loaded at the same time.
-     * @param reporter Resource group loading progress prompt
-     * @see #setMaxRetryTimes
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 根据组名加载一组资源。
-     * @param name 要加载资源组的组名。
-     * @param priority 加载优先级,可以为负数,默认值为 0。
-     * <br>低优先级的组必须等待高优先级组完全加载结束才能开始，同一优先级的组会同时加载。
-     * @param reporter 资源组的加载进度提示
-     * @see #setMaxRetryTimes
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    export function loadGroup(name: string, priority: number = 0, reporter?: PromiseTaskReporter): Promise<void> {
-        return compatiblePromise(instance.loadGroup(name, priority, reporter));
-    }
+
     /**
      * Check whether a resource group has been loaded.
      * @param name Group name。
@@ -472,46 +521,6 @@ module RES {
     export function destroyRes(name: string, force?: boolean): boolean {
         return instance.destroyRes(name, force);
     }
-    /**
-     * Sets the maximum number of concurrent load threads, the default value is 4.
-     * @param thread The number of concurrent loads to be set.
-     * @see #setMaxRetryTimes
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 设置最大并发加载线程数量，默认值是 4。
-     * @param thread 要设置的并发加载数。
-     * @see #setMaxRetryTimes
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    export function setMaxLoadingThread(thread: number): void {
-        if (!instance) instance = new Resource();
-        instance.setMaxLoadingThread(thread);
-    }
-
-    /**
-     * Sets the number of retry times when the resource failed to load, and the default value is 3.
-     * @param retry To set the retry count.
-     * @includeExample extension/resource/Resource.ts
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language en_US
-     */
-    /**
-     * 设置资源加载失败时的重试次数，默认值是 3。
-     * @param retry 要设置的重试次数。
-     * @includeExample extension/resource/Resource.ts
-     * @version Egret 5.2
-     * @platform Web,Native
-     * @language zh_CN
-     */
-    export function setMaxRetryTimes(retry: number): void {
-        instance.setMaxRetryTimes(retry);
-    }
 
     /**
      * Add event listeners, reference ResourceEvent defined constants.
@@ -660,6 +669,9 @@ module RES {
      * @private
      */
     export class Resource extends egret.EventDispatcher {
+
+        private queue = new ResourceLoader();
+
         vcs: VersionController;
         isVcsInit = false;
         constructor() {
@@ -768,7 +780,7 @@ module RES {
                     reject({ error: new ResourceManagerError(2005, name) });
                 })
             }
-            return queue.pushResGroup(resources, name, priority, reporter);
+            return this.queue.pushResGroup(resources, name, priority, reporter);
         }
         /**
          * 创建自定义的加载资源组,注意：此方法仅在资源配置文件加载完成后执行才有效。
@@ -853,7 +865,7 @@ module RES {
             }
 
             var { r, subkey } = tempResult;
-            return queue.pushResItem(r).then(value => {
+            return this.queue.pushResItem(r).then(value => {
                 host.save(r, value);
                 let p = processor.isSupport(r);
                 if (p && p.getData && subkey) {
@@ -897,7 +909,7 @@ module RES {
                     throw 'never';
                 }
             }
-            return queue.pushResItem(r).then(value => {
+            return this.queue.pushResItem(r).then(value => {
                 host.save(r as ResourceInfo, value);
                 if (compFunc && r) {
                     compFunc.call(thisObject, value, r.url);
@@ -930,7 +942,7 @@ module RES {
                 }
                 if (force || (config.config.loadGroup.length == 1 && config.config.loadGroup[0] == name)) {
                     for (let item of group) {
-                        queue.unloadResource(item);
+                        this.queue.unloadResource(item);
                     }
 
                     config.config.loadGroup.splice(index, 1);
@@ -948,7 +960,7 @@ module RES {
                     }
                     for (let item of group) {
                         if (removeItemHash[item.name] && removeItemHash[item.name] == 1) {
-                            queue.unloadResource(item);
+                            this.queue.unloadResource(item);
                         }
                     }
                     config.config.loadGroup.splice(index, 1);
@@ -958,7 +970,7 @@ module RES {
             else {
                 const item = config.getResource(name);
                 if (item) {
-                    return queue.unloadResource(item);
+                    return this.queue.unloadResource(item);
                 }
                 else {
                     console.warn(`在内存${name}资源不存在`);
@@ -976,7 +988,7 @@ module RES {
             if (thread < 1) {
                 thread = 1;
             }
-            queue.thread = thread;
+            this.queue.thread = thread;
         }
 
         /**
@@ -985,7 +997,7 @@ module RES {
          */
         public setMaxRetryTimes(retry: number): void {
             retry = Math.max(retry, 0);
-            queue.maxRetryTimes = retry;
+            this.queue.maxRetryTimes = retry;
         }
 
         public addResourceData(data: { name: string, type: string, url: string }): void {
@@ -993,10 +1005,8 @@ module RES {
             config.addResourceData(data);
         }
     }
-    /**
-     * Resource单例
-     */
-    var instance: Resource;
+
+    var instance: Resource = new Resource();
 
 }
 
