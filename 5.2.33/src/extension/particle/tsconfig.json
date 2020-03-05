@@ -1,15 +1,26 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "outFile": "bin/particle/particle.js",
-        "declaration": true
+        "outFile": "../../../build/RCustomParticle/RCustomParticle.js",
+        "declaration": true,
+        "noImplicitAny": false,
+        "stripInternal": true,
+        "allowUnreachableCode": true,
+        "experimentalDecorators": true,
+        "strictNullChecks": false,
+        "sourceMap": false,
+        "lib": [
+            "es5",
+            "dom",
+            "es2015.promise"
+        ]
     },
-    "files": [
-        "libs/egret.d.ts",
-        "libs/game.d.ts",
-        "src/Particle.ts",
-		"src/ParticleSystem.ts",
-		"src/GravityParticle.ts",
-		"src/GravityParticleSystem.ts"
+    "include": [
+        "RCustom/**.ts",
+        "**/**.d.ts",
+        "../../../build/egret/**.d.ts",
+        "../../../build/eui/**.d.ts",
+        "../../../build/game/**.d.ts",
+        "../../../build/assetsmanager/**.d.ts"
     ]
 }
