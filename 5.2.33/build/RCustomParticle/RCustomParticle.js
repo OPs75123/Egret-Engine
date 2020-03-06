@@ -30,6 +30,7 @@ var RCustom;
         // ----------------------------------------------------
         function ParticeSystem() {
             var _this = _super.call(this) || this;
+            _this.IsVertical = true; // 畫面是否為橫版
             _this.LastStartTime = 0; // 紀錄上次的噴發時間點
             _this.FreamTime = 0; // 紀錄這一次要噴發多少時間
             _this.numParticles = 0; // 當前使用中的粒子數量
@@ -126,7 +127,6 @@ var RCustom;
             this.NowPlayTime = 0;
             egret.startTick(this.countTime, this); // 開始計時執行
             this.timeStamp = egret.getTimer(); // 紀錄當前開始的時間
-            dEventSystem.on_event("start", this.timeStamp);
             if (this.Path_Mode == true)
                 this.preProcessPath(); // 設定曲線
             this.IsSendTimeEvent = this.Config.ParticleIsEventType;
@@ -141,7 +141,6 @@ var RCustom;
         ParticeSystem.prototype.countTime = function (timeStamp) {
             var dt = timeStamp - this.timeStamp; // 紀錄時間差
             this.timeStamp = timeStamp; // 儲存新的時間
-            dEventSystem.on_event("countTime", timeStamp);
             this.NowPlayTime += dt; // 累加時間
             // ---------- 修改噴發時間 ----------
             if (this.totalTime != -1) {
@@ -173,7 +172,7 @@ var RCustom;
                 for (var i = 0; i < Len; i++) {
                     var CheckTime = _lstEventTime[i];
                     if (CheckTime < NowTime) {
-                        dEventSystem.on_event("eventName", this, _lstEventName[i]);
+                        EventSystem.on_event(eEvent.on_particles_event, this, _lstEventName[i]);
                         _lstEventTime.splice(i, 1);
                         _lstEventName.splice(i, 1);
                     }
@@ -183,12 +182,12 @@ var RCustom;
             }
             if (this.totalTime == 0) {
                 egret.clearInterval(this.IntervalCode);
-                //dEventSystem.on_event("stop", this);
+                EventSystem.on_event(eEvent.on_particles_stop, this);
             }
             if (this.numParticles == 0 && this.totalTime == 0) {
                 this.visible = false;
                 egret.stopTick(this.countTime, this); // 時間到的話，就移除
-                dEventSystem.on_event("done");
+                EventSystem.on_event(eEvent.on_particles_done, this);
                 if (true)
                     if (this.Config.ParticeIsAutoFixVisible == true)
                         console.log("當前設定的SaveTime 有效能問題，粒子在第" + ParticeSystem.MaxDisplayTime + " 豪秒，就不在畫面上了");
@@ -367,14 +366,14 @@ var RCustom;
         };
         ParticeSystem.prototype.setLocation_X = function (value) {
             this.stop(true);
-            var temp_x = (IsVertical) ? 360 : 640;
+            var temp_x = (this.IsVertical) ? 360 : 640;
             this.Config.ParticeSystemLocation_X = value + temp_x;
             this.x = value + temp_x;
             this.start();
         };
         ParticeSystem.prototype.setLocation_Y = function (value) {
             this.stop(true);
-            var temp_y = (IsVertical) ? 640 : 360;
+            var temp_y = (this.IsVertical) ? 640 : 360;
             this.Config.ParticeSystemLocation_Y = value + temp_y;
             this.y = value + temp_y;
             this.start();

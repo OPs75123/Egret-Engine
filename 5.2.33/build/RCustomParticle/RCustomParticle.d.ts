@@ -1,5 +1,6 @@
 declare module RCustom {
     class ParticeSystem extends egret.DisplayObjectContainer {
+        IsVertical: boolean;
         private LastStartTime;
         private FreamTime;
         static MaxDisplayTime: number;

@@ -19,6 +19,7 @@ module RCustom {
 
     export class ParticeSystem extends egret.DisplayObjectContainer {
 
+        public IsVertical: boolean = true;           // 畫面是否為橫版
         private LastStartTime: number = 0;          // 紀錄上次的噴發時間點
         private FreamTime: number = 0;              // 紀錄這一次要噴發多少時間
 
@@ -74,8 +75,7 @@ module RCustom {
             this.addChild(this.display);
         }
 
-        public Test():void
-        {
+        public Test(): void {
             console.log("..............................................");
         }
 
@@ -164,7 +164,6 @@ module RCustom {
             this.NowPlayTime = 0;
             egret.startTick(this.countTime, this); // 開始計時執行
             this.timeStamp = egret.getTimer(); // 紀錄當前開始的時間
-            dEventSystem.on_event("start", this.timeStamp);
 
             if (this.Path_Mode == true)
                 this.preProcessPath(); // 設定曲線
@@ -182,8 +181,6 @@ module RCustom {
         private countTime(timeStamp) {
             var dt: number = timeStamp - this.timeStamp; // 紀錄時間差
             this.timeStamp = timeStamp; // 儲存新的時間
-
-            dEventSystem.on_event("countTime", timeStamp);
 
             this.NowPlayTime += dt; // 累加時間
 
@@ -223,7 +220,7 @@ module RCustom {
                 for (var i = 0; i < Len; i++) {
                     var CheckTime: number = _lstEventTime[i];
                     if (CheckTime < NowTime) {
-                        dEventSystem.on_event("eventName", this, _lstEventName[i]);
+                        EventSystem.on_event(eEvent.on_particles_event, this, _lstEventName[i]);
                         _lstEventTime.splice(i, 1);
                         _lstEventName.splice(i, 1);
                     }
@@ -236,14 +233,14 @@ module RCustom {
             if (this.totalTime == 0) // 如果粒子系統不在產出粒子的話，進行通知
             {
                 egret.clearInterval(this.IntervalCode)
-                //dEventSystem.on_event("stop", this);
+                EventSystem.on_event(eEvent.on_particles_stop, this);
             }
 
             if (this.numParticles == 0 && this.totalTime == 0) // 如果時間到的話
             {
                 this.visible = false;
                 egret.stopTick(this.countTime, this); // 時間到的話，就移除
-                dEventSystem.on_event("done");
+                EventSystem.on_event(eEvent.on_particles_done, this);
 
                 if (DEBUG)
                     if (this.Config.ParticeIsAutoFixVisible == true)
@@ -453,7 +450,7 @@ module RCustom {
 
         public setLocation_X(value: number) {
             this.stop(true);
-            let temp_x:number = (IsVertical)? 360:640;
+            let temp_x: number = (this.IsVertical) ? 360 : 640;
             this.Config.ParticeSystemLocation_X = value + temp_x;
             this.x = value + temp_x;
             this.start();
@@ -461,7 +458,7 @@ module RCustom {
 
         public setLocation_Y(value: number) {
             this.stop(true);
-            let temp_y:number = (IsVertical)? 640:360;
+            let temp_y: number = (this.IsVertical) ? 640 : 360;
             this.Config.ParticeSystemLocation_Y = value + temp_y;
             this.y = value + temp_y;
             this.start();
