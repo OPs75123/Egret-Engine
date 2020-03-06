@@ -15,20 +15,9 @@
             "es2015.promise"
         ]
     },
-    "files": [
-        "../../../build/egret/egret.d.ts",
-        "../../../build/game/game.d.ts",
-        "src/shim/version/IVersionController.ts",
-        "src/shim/version/NativeVersionController.ts",
-        "src/core/Path.ts",
-        "src/core/FileSystem.ts",
-        "src/core/ResourceConfig.ts",
-        "src/core/ResourceLoader.ts",
-        "src/core/ResourceManager.ts",
-        "src/processor/Processor.ts",
-        "src/shim/ResourceEvent.ts",
-        "src/shim/ResourceItem.ts",
-        "src/DEBUG.ts",
-        "src/shim/Resource.ts"
+    "include": [
+        "**/**.ts",
+        "../../../build/egret/**.d.ts",
+        "../../../build/game/**.d.ts"
     ]
 }

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "outFile": "../../../build/eui/eui.js",
+        "outFile": "../../../build/tween/tween.js",
         "declaration": true,
         "noImplicitAny": false,
         "stripInternal": true,

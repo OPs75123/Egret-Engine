@@ -1,13 +1,22 @@
 {
-	"compilerOptions": {
-		"target": "es5",
-		"outFile": "../../../build/mouse/mouse.js",
-		"declaration": true
-	},
-	"files": [
-		"libs/egret.d.ts",
-		"libs/game.d.ts",
-		"src/MouseEvent.ts",
-		"src/MouseDelegate.ts"
-	]
+    "compilerOptions": {
+        "target": "es5",
+        "outFile": "../../../build/mouse/mouse.js",
+        "declaration": true,
+        "noImplicitAny": false,
+        "stripInternal": true,
+        "allowUnreachableCode": true,
+        "experimentalDecorators": true,
+        "strictNullChecks": false,
+        "sourceMap": false,
+        "lib": [
+            "es5",
+            "dom",
+            "es2015.promise"
+        ]
+    },
+    "include": [
+        "**/**.ts",
+        "../../../build/egret/**.d.ts"
+    ]
 }
