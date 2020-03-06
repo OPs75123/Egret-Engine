@@ -98,6 +98,13 @@ namespace egret.sys {
 
         /**
          * @private
+         */
+        private IsShowFPS: boolean = false;
+
+        public static FPS:number = -1;
+
+        /**
+         * @private
          * 启动播放器
          */
         public start(): void {
@@ -199,6 +206,15 @@ namespace egret.sys {
             stage.dispatchEventWith(Event.RESIZE);
         }
 
+        /**
+         * @public
+         * 獲取當前FPS為多少，-1代表異常，可能沒有開啟FPS功能
+         */
+        public GetFPS() {
+            if (this.IsShowFPS == undefined || this.IsShowFPS == false)
+                return -9527; // 如果從未開啟FPS或者FPS被關閉，那麼我就回傳-1
+            return Player.FPS; // 回傳正確的FPS
+        }
 
         /**
          * @private
@@ -206,6 +222,7 @@ namespace egret.sys {
          */
         public displayFPS(showFPS: boolean, showLog: boolean, logFilter: string, styles: Object) {
             showLog = !!showLog;
+            this.IsShowFPS = showFPS;
             if (showLog) {
                 egret.log = function () {
                     let length = arguments.length;
@@ -399,6 +416,7 @@ namespace egret.sys {
             if (this.totalTime >= 1000) {
 
                 let lastFPS = Math.min(Math.ceil(this.totalTick * 1000 / this.totalTime), ticker.$frameRate);
+                Player.FPS = lastFPS;
                 let lastDrawCalls = Math.round(this.drawCalls / this.totalTick);
                 let lastCostRender = Math.round(this.costRender / this.totalTick);
                 let lastCostTicker = Math.round(this.costTicker / this.totalTick);
