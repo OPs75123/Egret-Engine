@@ -258,7 +258,7 @@ function uglify(sourceFile) {
         DEBUG: false,
         RELEASE: true
     };
-    var result = UglifyJS.minify(sourceFile, { compress: { global_defs: defines }, fromString: true, output: { beautify: false } });
+    var result = UglifyJS.minify(sourceFile, { compress: { global_defs: defines ,pure_funcs: [ 'console.log' ] }, fromString: true, output: { beautify: false } });
     var code = result.code;
     return code;
 }
@@ -269,7 +269,7 @@ function minify(sourceFile, output) {
         RELEASE: true
     };
     //UglifyJS参数参考这个页面：https://github.com/mishoo/UglifyJS2
-    var result = UglifyJS.minify(sourceFile, { compress: { global_defs: defines }, output: { beautify: false } });
+    var result = UglifyJS.minify(sourceFile, { compress: { global_defs: defines ,pure_funcs: [ 'console.log' ] }, output: { beautify: false } });
     var code = result.code;
     if (output) {
         file.save(output, code);
