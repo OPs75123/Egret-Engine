@@ -1,0 +1,19 @@
+粒子預覽工具
+出版給release
+
+粒子工具-屬性/畫面修改版本號
+runIIS (自製-未看)
+
+Client編輯本地文檔
+webview.load()
+
+粒子系統 debug/release 版本差別
+debug可以偵測，顯示log
+releasa應該快速執行，不顯示log
+1.release manifest.json抓取的檔案為debug進行egrert publish 編譯後的檔案
+2.release版本的log是關閉的
+
+粒子系統的開發可以在egret遊戲裡面做比較方便，完成後輸入 egret build，輸出.js min.js .d.ts 檔，去引擎碼的位置build找取檔案丟到egret的libs資料夾，再去egretProperties.json新增路徑跟名稱，即可使用~
+
+[Client][Engine] 加入Egret Paricle TS源碼
+原則上加入沒有用到~ 算是有個參考的依據

@@ -1,0 +1,17 @@
+min.js 為程式碼混淆的檔案
+可經由 ->Closure Compiler Service UI 產生
+
+如果修改的是egret引擎源碼，要使用egret make --egretversion 版號，才會編譯檔案
+
+egret build 會依照相對資料夾底下的tsconfig重新編譯出.d.ts / .js / .min.js
+
+build資料夾內無法用ts檔產生，修改後用檔案覆蓋的方式
+
+-龍骨相關的東西並不是egret的東西，是改成egert的形狀後使用
+
+引擎修改上主要以src資料夾內為主
+
+tool 檔案內的東西，可以從node相關套件找到類似的，方便修改?
+
+程式碼內的require()-算是舊的引入方式
+應使用新標準的import方式-官網查?
