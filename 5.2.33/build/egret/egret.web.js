@@ -416,11 +416,17 @@ var egret;
                     return;
                 }
                 if (WebAudioDecode.isDecoding) {
-                    return;
+                    if (true) {
+                        console.info("[解析中不能插隊]  為什麼你要插隊呢 我不return了拉 呵呵 誰叫這邊有Bug ");
+                    }
                 }
                 WebAudioDecode.isDecoding = true;
                 var decodeInfo = WebAudioDecode.decodeArr.shift();
+                if (true)
+                    console.info("[即將解析] 使用安卓系統解析的音樂 URL = " + decodeInfo["url"]);
                 WebAudioDecode.ctx.decodeAudioData(decodeInfo["buffer"], function (audioBuffer) {
+                    if (true)
+                        console.info("[成功] 當前使用安卓系統解析音樂 URL = " + decodeInfo["url"]);
                     decodeInfo["self"].audioBuffer = audioBuffer;
                     if (decodeInfo["success"]) {
                         decodeInfo["success"]();
@@ -428,6 +434,8 @@ var egret;
                     WebAudioDecode.isDecoding = false;
                     WebAudioDecode.decodeAudios();
                 }, function () {
+                    if (true)
+                        console.info("[失敗] 當前使用安卓系統解析音樂 URL = " + decodeInfo["url"]);
                     egret.log('sound decode error');
                     if (decodeInfo["fail"]) {
                         decodeInfo["fail"]();
@@ -3656,6 +3664,31 @@ var egret;
                 egret.Capabilities["renderMode" + ""] = "canvas";
             }
         }
+        var IsRequestAnimationFrameMode = false;
+        function getTickerType() {
+            return IsRequestAnimationFrameMode;
+        }
+        web.getTickerType = getTickerType;
+        /** 獲取當前裝置類型 */
+        function getDeviceType() {
+            var userAgent = navigator.userAgent;
+            if (/Android/i.test(userAgent)) {
+                return "android";
+            }
+            else if (/iPad/i.test(userAgent)) {
+                return "iOS";
+            }
+            else if (/iPhone/i.test(userAgent)) {
+                return "iOS";
+            }
+            else if (/Windows/i.test(userAgent)) {
+                return "web";
+            }
+            else {
+                return "unknown";
+            }
+        }
+        web.getDeviceType = getDeviceType;
         /**
          * @private
          * 启动心跳计时器。
@@ -3666,10 +3699,17 @@ var egret;
                 window["mozRequestAnimationFrame"] ||
                 window["oRequestAnimationFrame"] ||
                 window["msRequestAnimationFrame"];
+            if (getDeviceType() == "web" && requestAnimationFrame) {
+                requestAnimationFrame = null;
+            }
             if (!requestAnimationFrame) {
+                IsRequestAnimationFrameMode = false;
                 requestAnimationFrame = function (callback) {
                     return window.setTimeout(callback, 1000 / 60);
                 };
+            }
+            else {
+                IsRequestAnimationFrameMode = true;
             }
             requestAnimationFrame(onTick);
             function onTick() {

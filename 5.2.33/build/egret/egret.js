@@ -13818,6 +13818,10 @@ var egret;
                  * @private
                  */
                 _this.isPlaying = false;
+                /**
+                 * @private
+                 */
+                _this.IsShowFPS = false;
                 if (true && !buffer) {
                     egret.$error(1003, "buffer");
                 }
@@ -13937,11 +13941,21 @@ var egret;
                 stage.dispatchEventWith(egret.Event.RESIZE);
             };
             /**
+             * @public
+             * 獲取當前FPS為多少，-1代表異常，可能沒有開啟FPS功能
+             */
+            Player.prototype.GetFPS = function () {
+                if (this.IsShowFPS == undefined || this.IsShowFPS == false)
+                    return -9527; // 如果從未開啟FPS或者FPS被關閉，那麼我就回傳-1
+                return Player.FPS; // 回傳正確的FPS
+            };
+            /**
              * @private
              * 显示FPS。
              */
             Player.prototype.displayFPS = function (showFPS, showLog, logFilter, styles) {
                 showLog = !!showLog;
+                this.IsShowFPS = showFPS;
                 if (showLog) {
                     egret.log = function () {
                         var length = arguments.length;
@@ -13992,6 +14006,7 @@ var egret;
                     errorLines = null;
                 }
             };
+            Player.FPS = -1;
             return Player;
         }(egret.HashObject));
         sys.Player = Player;
@@ -14071,6 +14086,7 @@ var egret;
                 this.costTicker += costTicker;
                 if (this.totalTime >= 1000) {
                     var lastFPS = Math.min(Math.ceil(this.totalTick * 1000 / this.totalTime), egret.ticker.$frameRate);
+                    Player.FPS = lastFPS;
                     var lastDrawCalls = Math.round(this.drawCalls / this.totalTick);
                     var lastCostRender = Math.round(this.costRender / this.totalTick);
                     var lastCostTicker = Math.round(this.costTicker / this.totalTick);

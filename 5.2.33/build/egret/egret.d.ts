@@ -9289,6 +9289,11 @@ declare namespace egret.sys {
         private isPlaying;
         /**
          * @private
+         */
+        private IsShowFPS;
+        static FPS: number;
+        /**
+         * @private
          * 启动播放器
          */
         start(): void;
@@ -9318,6 +9323,11 @@ declare namespace egret.sys {
          * @param stageHeight 舞台高度（以像素为单位）
          */
         updateStageSize(stageWidth: number, stageHeight: number): void;
+        /**
+         * @public
+         * 獲取當前FPS為多少，-1代表異常，可能沒有開啟FPS功能
+         */
+        GetFPS(): number;
         /**
          * @private
          * 显示FPS。
